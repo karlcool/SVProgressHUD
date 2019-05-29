@@ -454,6 +454,10 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
         labelWidth = ceilf(CGRectGetWidth(labelRect));
     }
     
+    if (!self.indefiniteAnimatedView) {
+        self.indefiniteAnimatedView = [self getIndefiniteAnimatedView];
+    }
+    
     // Calculate hud size based on content
     // For the beginning use default values, these
     // might get update if string is too large etc.
@@ -795,6 +799,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
                 [strongSelf cancelRingLayerAnimation];
                 
                 // Add indefiniteAnimatedView to HUD
+                strongSelf.indefiniteAnimatedView = [self getIndefiniteAnimatedView];
                 [strongSelf.hudView.contentView addSubview:strongSelf.indefiniteAnimatedView];
                 if([strongSelf.indefiniteAnimatedView respondsToSelector:@selector(startAnimating)]) {
                     [(id)strongSelf.indefiniteAnimatedView startAnimating];
@@ -1058,7 +1063,14 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 
 #pragma mark - Ring progress animation
 
-- (UIView*)indefiniteAnimatedView {
+- (UIView*)getIndefiniteAnimatedView {
+    UIView *customView = [self customAnimatedView];
+    if (customView) {
+        [_indefiniteAnimatedView removeFromSuperview];
+        _indefiniteAnimatedView = nil;
+        return customView;
+    }
+    
     // Get the correct spinner for defaultAnimationType
     if(self.defaultAnimationType == SVProgressHUDAnimationTypeFlat){
         // Check if spinner exists and is an object of different class
@@ -1145,6 +1157,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     }
     // Remove from view
     [self.indefiniteAnimatedView removeFromSuperview];
+    self.indefiniteAnimatedView = nil;
 }
 
 
@@ -1506,6 +1519,10 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 
 - (void)setMaxSupportedWindowLevel:(UIWindowLevel)maxSupportedWindowLevel {
     if (!_isInitializing) _maxSupportedWindowLevel = maxSupportedWindowLevel;
+}
+
+- (nullable UIView*)customAnimatedView {
+    return nil;
 }
 
 @end

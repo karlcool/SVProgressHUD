@@ -143,5 +143,7 @@ typedef void (^SVProgressHUDDismissCompletion)(void);
 
 + (NSTimeInterval)displayDurationForString:(nullable NSString*)string;
 
+- (nullable UIView*)customAnimatedView;
+
 @end
 
